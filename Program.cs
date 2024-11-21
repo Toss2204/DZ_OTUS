@@ -20,6 +20,7 @@ namespace DZ_1_Izotov
                         "/echo - возврат введенного значения\n" +
                         "/exit - выход";
 
+            char N= 'A';
             
             //теперь запускаю вечный цикл
             while (InsertCommand != "/exit") {
