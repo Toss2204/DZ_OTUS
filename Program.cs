@@ -58,30 +58,26 @@ namespace DZ_1_Izotov
                     switch (insertCommand)
                     {
                         case "/start":
-                            if (namePol == "")
-                            {
-                                Console.WriteLine("Введите, пожалуйста, свое имя");
-                            }
 
-                            var newNameUser = Console.ReadLine();
-
-                            //на всякий случай от null избавимся
-                            if (newNameUser == null)
-                            {
-                                newNameUser = "";
-                            }
-                            namePol = newNameUser.ToString();
+                            namePol=StartMethod(namePol);
                             break;
 
                         case "/help":
-                            Console.WriteLine(help);
+                            HelpMethod(help);
                             break;
                         case "/info":
-                            Console.WriteLine("Версия программы: " + versionApp + " Дата релиза: " + dateApp);
+                            InfoMethod(versionApp, dateApp);
                             break;
                         default:
-                            Console.WriteLine("Введены неточные данные. Повторите попытку");
-                            break;
+                            if (insertCommand == "/exit")
+                            {
+                                Console.WriteLine($"До свидания{namePol}");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Введены неточные данные. Повторите попытку");
+                            }
+                                break;
 
                     }
                 }
@@ -96,6 +92,37 @@ namespace DZ_1_Izotov
                     InsCom = InsCom.Trim();
                     Console.WriteLine(InsCom);
                 
+            }
+
+            static string StartMethod(string namePol)
+            {
+
+                if (namePol == "")
+                {
+                    Console.WriteLine("Введите, пожалуйста, свое имя");
+                }
+
+                var newNameUser = Console.ReadLine();
+
+                //на всякий случай от null избавимся
+                if (newNameUser == null)
+                {
+                    newNameUser = "";
+                }
+                return newNameUser.ToString();
+
+            }
+
+            static void HelpMethod(string help)
+            {
+
+                Console.WriteLine(help);
+
+            }
+
+            static void InfoMethod(string versionApp, DateTime dateApp)
+            {
+                Console.WriteLine($"Версия программы: { versionApp} Дата релиза: {dateApp}");
             }
 
         }
