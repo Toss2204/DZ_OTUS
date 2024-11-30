@@ -5,28 +5,25 @@ using System.Xml.Linq;
 
 namespace DZ_1_Izotov
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             //сначала задаю переменные
             string namePol = "";
             var insertCommand = "";
-            DateTime dateApp = new DateTime(2024, 11, 18, 20,05,01);
+            DateTime dateApp = new DateTime(2024, 11, 18, 20, 05, 01);
             string versionApp = "1.0";
-            string help= "Можно ввести одну из указанных команд:\n" +
-                        "/start - авторизация\n" +
-                        "/help - справка\n" +
-                        "/info - информация о программе\n" +
-                        "/echo - возврат введенного значения\n" +
-                        "/exit - выход";
 
-            
+
+            List<string> tasks = new List<string>();
+
             //теперь запускаю вечный цикл
-            while (insertCommand != "/exit") {
+            while (insertCommand != "/exit")
+            {
 
                 //укажем запятую перед именем пользователя
-                if (namePol!="" && namePol.IndexOf(',')<0)
+                if (namePol != "" && namePol.IndexOf(',') < 0)
                 {
                     namePol = ", " + namePol;
                 }
@@ -36,13 +33,16 @@ namespace DZ_1_Izotov
                 Console.WriteLine("/start");
                 Console.WriteLine("/help");
                 Console.WriteLine("/info");
+                Console.WriteLine("/adtask");
+                Console.WriteLine("/showtasks");
+                Console.WriteLine("/removetask");
                 Console.WriteLine("/exit");
                 Console.WriteLine("");
 
-                insertCommand =Console.ReadLine();
+                insertCommand = Console.ReadLine();
 
-                int indexOfSubstring = insertCommand.IndexOf("/echo");
-                if (indexOfSubstring >= 0)
+                bool indexOfSubstring = insertCommand.Contains("/echo");
+                if (indexOfSubstring == true)
                 {
                     //избавимся от null и вызовем внешний метод, который сообщит остальную строку после /echo
                     if (insertCommand == null)
@@ -59,14 +59,27 @@ namespace DZ_1_Izotov
                     {
                         case "/start":
 
-                            namePol=StartMethod(namePol);
+                            namePol = StartMethod(namePol);
                             break;
 
                         case "/help":
-                            HelpMethod(help);
+                            HelpMethod();
                             break;
                         case "/info":
                             InfoMethod(versionApp, dateApp);
+                            break;
+                        case "/adtask":
+                            AdTaskMethod(ref tasks);
+                            break;
+                        case "/showtasks":
+                            ShowTasksMethod(ref tasks);
+                            break;
+                        case "/removetask":
+                            bool Res = RemoveTaskMethod(ref tasks);
+                            while (Res != true)
+                            {
+                                Res = RemoveTaskMethod(ref tasks);
+                            }
                             break;
                         default:
                             if (insertCommand == "/exit")
@@ -77,7 +90,7 @@ namespace DZ_1_Izotov
                             {
                                 Console.WriteLine("Введены неточные данные. Повторите попытку");
                             }
-                                break;
+                            break;
 
                     }
                 }
@@ -85,45 +98,155 @@ namespace DZ_1_Izotov
                 Console.WriteLine("");
             }
 
-            static  void EchoMethod(string InsCom)
-            {
 
-                    InsCom = InsCom.Replace("/echo", "");
-                    InsCom = InsCom.Trim();
-                    Console.WriteLine(InsCom);
-                
+
+
+        }
+
+        static void EchoMethod(string InsCom)
+        {
+
+            InsCom = InsCom.Replace("/echo", "");
+            InsCom = InsCom.Trim();
+            Console.WriteLine(InsCom);
+
+        }
+
+        static string StartMethod(string namePol)
+        {
+
+            if (namePol == "")
+            {
+                Console.WriteLine("Введите, пожалуйста, свое имя");
             }
 
-            static string StartMethod(string namePol)
+            var newNameUser = Console.ReadLine();
+
+            //на всякий случай от null избавимся
+            if (newNameUser == null)
+            {
+                newNameUser = "";
+            }
+            return newNameUser.ToString();
+
+        }
+
+        static void HelpMethod()
+        {
+            string help = "Можно ввести одну из указанных команд:\n" +
+                    "/start - авторизация\n" +
+                    "/help - справка\n" +
+                    "/info - информация о программе\n" +
+                    "/echo - возврат введенного значения\n" +
+                    "/adtask - добавить задачу в список задач\n" +
+                    "/showtasks - показать список задач\n" +
+                    "/removetask - удалить указанную задачу\n" +
+                    "/exit - выход";
+            Console.WriteLine(help);
+
+        }
+
+        static void InfoMethod(string versionApp, DateTime dateApp)
+        {
+            Console.WriteLine($"Версия программы: {versionApp} Дата релиза: {dateApp}");
+            DateTime dateUpdApp = new DateTime(2024, 11, 30, 20, 05, 02);
+            Console.WriteLine($"Обновлено: {dateUpdApp}");
+        }
+
+        static void AdTaskMethod(ref List<string> tasks)
+        {
+            Console.WriteLine("Введите, пожалуйста, описание задачи");
+            var newTask = Console.ReadLine();
+
+            //на всякий случай от null избавимся
+            if (newTask == null)
+            {
+                newTask = "";
+            }
+
+            if (newTask == "")
+            {
+                Console.WriteLine("Пустую задачу ввести нельзя. Пожалуйста, повторите ввод");
+                newTask = Console.ReadLine();
+            }
+
+            tasks.Add(newTask);
+
+        }
+
+
+        static void ShowTasksMethod(ref List<string> tasks, string message = "Список задач:")
+        {
+            if (tasks.Count > 0)
+            {
+                Console.WriteLine(message);
+                for (int i = 0; i < tasks.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {tasks[i]}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Список задач пуст");
+            }
+
+        }
+
+        static bool RemoveTaskMethod(ref List<string> tasks)
+        {
+
+            if (tasks.Count > 0)
             {
 
-                if (namePol == "")
-                {
-                    Console.WriteLine("Введите, пожалуйста, свое имя");
-                }
+                string mes = "Укажите номер задачи для удаления из списка:";
+                ShowTasksMethod(ref tasks, mes);
 
-                var newNameUser = Console.ReadLine();
+                var numberOfTask = Console.ReadLine();
 
                 //на всякий случай от null избавимся
-                if (newNameUser == null)
+                if (numberOfTask != null)
                 {
-                    newNameUser = "";
+
+                    bool result = int.TryParse(numberOfTask, out var number);
+                    Console.WriteLine();
+                    {
+                        if (result == true)
+                        {
+                            if (number <= tasks.Count && number > 0)
+                            {
+                                string currentTask = tasks[number - 1];
+                                tasks.RemoveAt(number - 1);
+                                Console.WriteLine($"Задача {number}.{currentTask} удалена из списка");
+                                Console.WriteLine();
+                                ShowTasksMethod(ref tasks);
+                                return true;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"ВНИМАНИЕ! Вы вышли за границы списка. Максимальное число для ввода:{tasks.Count}, а минимальное: 1");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("ВНИМАНИЕ! Вводить можно только число");
+                        }
+                    }
+
+
                 }
-                return newNameUser.ToString();
+                else
+                {
+                    Console.WriteLine("ВНИМАНИЕ! Вводить можно только число");
+                }
 
             }
-
-            static void HelpMethod(string help)
+            else
             {
-
-                Console.WriteLine(help);
-
+                Console.WriteLine("ВНИМАНИЕ! Список задач пуст");
+                return true;
             }
 
-            static void InfoMethod(string versionApp, DateTime dateApp)
-            {
-                Console.WriteLine($"Версия программы: { versionApp} Дата релиза: {dateApp}");
-            }
+            return false;
 
         }
     }
